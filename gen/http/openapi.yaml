@@ -1,7 +1,7 @@
 swagger: "2.0"
 info:
-  title: Dojo-1 Service
-  description: Dojo-1 HTTP service
+  title: Decolar Service
+  description: Decolar HTTP service
   version: ""
 host: localhost:3333
 consumes:
@@ -13,32 +13,63 @@ produces:
 - application/xml
 - application/gob
 paths:
+  /compania:
+    post:
+      tags:
+      - decolar
+      summary: create_compania decolar
+      operationId: decolar#create_compania
+      parameters:
+      - name: create_compania_request_body
+        in: body
+        required: true
+        schema:
+          $ref: '#/definitions/DecolarCreateCompaniaRequestBody'
+          required:
+          - nome
+          - pais_id
+      responses:
+        "201":
+          description: Created response.
+          schema:
+            $ref: '#/definitions/DecolarCreateCompaniaResponseBody'
+            required:
+            - id
+            - nome
+            - pais_id
+            - created_at
+        "400":
+          description: Bad Request response.
+          schema:
+            $ref: '#/definitions/DecolarCreateCompaniaInvalidFieldsResponseBody'
+      schemes:
+      - http
   /pais:
     post:
       tags:
-      - pais
-      summary: create_pais pais
-      operationId: pais#create_pais
+      - decolar
+      summary: create_pais decolar
+      operationId: decolar#create_pais
       parameters:
       - name: create_pais_request_body
         in: body
         required: true
         schema:
-          $ref: '#/definitions/PaisCreatePaisRequestBody'
+          $ref: '#/definitions/DecolarCreatePaisRequestBody'
           required:
           - nome
       responses:
         "201":
           description: Created response.
           schema:
-            $ref: '#/definitions/PaisCreatePaisResponseBody'
+            $ref: '#/definitions/DecolarCreatePaisResponseBody'
             required:
             - id
             - nome
         "400":
           description: Bad Request response.
           schema:
-            $ref: '#/definitions/PaisCreatePaisInvalidFieldsResponseBody'
+            $ref: '#/definitions/DecolarCreatePaisInvalidFieldsResponseBody'
       schemes:
       - http
   /swagger.json:
@@ -55,7 +86,7 @@ paths:
       schemes:
       - http
 definitions:
-  PaisCreatePaisInvalidFieldsResponseBody:
+  DecolarCreateCompaniaInvalidFieldsResponseBody:
     title: 'Mediatype identifier: application/vnd.goa.error; view=default'
     type: object
     properties:
@@ -78,18 +109,18 @@ definitions:
       temporary:
         type: boolean
         description: Is the error temporary?
-        example: false
+        example: true
       timeout:
         type: boolean
         description: Is the error a timeout?
-        example: false
-    description: create_pais_invalid_fields_response_body result type (default view)
+        example: true
+    description: create_compania_invalid_fields_response_body result type (default view)
     example:
-      fault: true
+      fault: false
       id: 123abc
       message: parameter 'p' must be an integer
       name: bad_request
-      temporary: true
+      temporary: false
       timeout: false
     required:
     - name
@@ -98,30 +129,117 @@ definitions:
     - temporary
     - timeout
     - fault
-  PaisCreatePaisRequestBody:
-    title: PaisCreatePaisRequestBody
+  DecolarCreateCompaniaRequestBody:
+    title: DecolarCreateCompaniaRequestBody
     type: object
     properties:
       nome:
         type: string
-        example: Enim itaque velit error voluptate ad alias.
+        example: g
+        minLength: 1
+      pais_id:
+        type: string
+        example: 288BFD74-D973-18B5-FAA5-29ADF4569AC7
+        format: uuid
     example:
-      nome: Aut labore sint reprehenderit excepturi ipsum ex.
+      nome: "0"
+      pais_id: E330131A-4516-F39A-1E98-7CBF64E7E788
     required:
     - nome
-  PaisCreatePaisResponseBody:
-    title: PaisCreatePaisResponseBody
+    - pais_id
+  DecolarCreateCompaniaResponseBody:
+    title: DecolarCreateCompaniaResponseBody
+    type: object
+    properties:
+      created_at:
+        type: string
+        example: Officiis sapiente facilis quos.
+      id:
+        type: string
+        example: Libero voluptates ut nulla debitis.
+      nome:
+        type: string
+        example: Qui facilis quos delectus.
+      pais_id:
+        type: string
+        example: Et ut temporibus quo eligendi.
+    example:
+      created_at: Sit omnis.
+      id: Eaque porro excepturi qui in quae.
+      nome: A repellendus quia dolores quia iusto.
+      pais_id: Aspernatur voluptatem neque iusto eos cumque.
+    required:
+    - id
+    - nome
+    - pais_id
+    - created_at
+  DecolarCreatePaisInvalidFieldsResponseBody:
+    title: 'Mediatype identifier: application/vnd.goa.error; view=default'
+    type: object
+    properties:
+      fault:
+        type: boolean
+        description: Is the error a server-side fault?
+        example: true
+      id:
+        type: string
+        description: ID is a unique identifier for this particular occurrence of the problem.
+        example: 123abc
+      message:
+        type: string
+        description: Message is a human-readable explanation specific to this occurrence of the problem.
+        example: parameter 'p' must be an integer
+      name:
+        type: string
+        description: Name is the name of this class of errors.
+        example: bad_request
+      temporary:
+        type: boolean
+        description: Is the error temporary?
+        example: true
+      timeout:
+        type: boolean
+        description: Is the error a timeout?
+        example: true
+    description: create_pais_invalid_fields_response_body result type (default view)
+    example:
+      fault: true
+      id: 123abc
+      message: parameter 'p' must be an integer
+      name: bad_request
+      temporary: false
+      timeout: true
+    required:
+    - name
+    - id
+    - message
+    - temporary
+    - timeout
+    - fault
+  DecolarCreatePaisRequestBody:
+    title: DecolarCreatePaisRequestBody
+    type: object
+    properties:
+      nome:
+        type: string
+        example: Possimus placeat vel vero.
+    example:
+      nome: Eius et velit consectetur quasi dolores vel.
+    required:
+    - nome
+  DecolarCreatePaisResponseBody:
+    title: DecolarCreatePaisResponseBody
     type: object
     properties:
       id:
         type: string
-        example: Possimus consequatur cupiditate labore velit doloribus.
+        example: Nisi in quia voluptatem pariatur quia inventore.
       nome:
         type: string
-        example: Aut corporis vel ab a.
+        example: Beatae dolor error ut.
     example:
-      id: Quia nobis placeat dolorem praesentium.
-      nome: Omnis a ex ratione qui.
+      id: Id nihil voluptatem.
+      nome: Ea maiores molestiae culpa voluptatum itaque sed.
     required:
     - id
     - nome

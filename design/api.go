@@ -5,12 +5,12 @@ import (
 	_ "goa.design/plugins/v3/goakit"
 )
 
-var _ = API("dojo-1", func() {
-	Title("Dojo-1 Service")
-	Description("Dojo-1 HTTP service")
-	Server("dojo-1", func() {
+var _ = API("decolar", func() {
+	Title("Decolar Service")
+	Description("Decolar HTTP service")
+	Server("Decolar", func() {
 		Description("hosts for Dojo-1 Service.")
-		Services("pais")
+		Services("decolar")
 		Host("development", func() {
 			Description("Development hosts.")
 			URI("http://localhost:3333")

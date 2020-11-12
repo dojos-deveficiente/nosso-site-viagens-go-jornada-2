@@ -16,8 +16,9 @@ import (
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 
-	paisGen "github.com/selmison/dojo-1/gen/pais"
-	"github.com/selmison/dojo-1/pkg/pais"
+	decolarGen "github.com/selmison/dojo-1/gen/decolar"
+
+	"github.com/selmison/dojo-1/pkg/decolar"
 )
 
 func main() {
@@ -45,8 +46,8 @@ func main() {
 
 	// Initialize the services.
 	var (
-		repo    *gorm.DB
-		paisSvc paisGen.Service
+		repo       *gorm.DB
+		decolarSvc decolarGen.Service
 	)
 	{
 		var err error
@@ -57,20 +58,21 @@ func main() {
 			panic("failed to connect database")
 		}
 		if err := repo.AutoMigrate(
-			&pais.Pais{},
+			&decolar.Pais{},
+			&decolar.Compania{},
 		); err != nil {
 			log.Fatalf("db init: %v", err)
 		}
-		paisSvc = pais.NewPais(repo, logger)
+		decolarSvc = decolar.NewService(repo, logger)
 	}
 
 	// Wrap the services in endpoints that can be invoked from other services
 	// potentially running in different processes.
 	var (
-		paisEndpoints *paisGen.Endpoints
+		decolarEndpoints *decolarGen.Endpoints
 	)
 	{
-		paisEndpoints = paisGen.NewEndpoints(paisSvc)
+		decolarEndpoints = decolarGen.NewEndpoints(decolarSvc)
 	}
 
 	// Create channel used by both the signal handler and server goroutines
@@ -110,7 +112,7 @@ func main() {
 			} else if u.Port() == "" {
 				u.Host += ":80"
 			}
-			handleHTTPServer(ctx, u, paisEndpoints, &wg, errc, logger, *dbgF)
+			handleHTTPServer(ctx, u, decolarEndpoints, &wg, errc, logger, *dbgF)
 		}
 
 	default:

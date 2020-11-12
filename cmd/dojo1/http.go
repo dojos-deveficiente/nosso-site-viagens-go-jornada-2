@@ -8,35 +8,35 @@ import (
 	"sync"
 	"time"
 
-	"github.com/go-kit/kit/endpoint"
 	"github.com/go-kit/kit/log"
-	kithttp "github.com/go-kit/kit/transport/http"
-	paiskitsvr "github.com/selmison/dojo-1/gen/http/pais/kitserver"
-	paissvr "github.com/selmison/dojo-1/gen/http/pais/server"
-	pais "github.com/selmison/dojo-1/gen/pais"
-	goahttp "goa.design/goa/v3/http"
-	httpmdlwr "goa.design/goa/v3/http/middleware"
+	kitHttp "github.com/go-kit/kit/transport/http"
+	goaHttp "goa.design/goa/v3/http"
+	httpMdlwr "goa.design/goa/v3/http/middleware"
 	"goa.design/goa/v3/middleware"
+
+	"github.com/selmison/dojo-1/gen/decolar"
+	decolarKitSvr "github.com/selmison/dojo-1/gen/http/decolar/kitserver"
+	decolarSvr "github.com/selmison/dojo-1/gen/http/decolar/server"
 )
 
 // handleHTTPServer starts configures and starts a HTTP server on the given
 // URL. It shuts down the server if any error is received in the error channel.
-func handleHTTPServer(ctx context.Context, u *url.URL, paisEndpoints *pais.Endpoints, wg *sync.WaitGroup, errc chan error, logger log.Logger, debug bool) {
+func handleHTTPServer(ctx context.Context, u *url.URL, decolarEndpoints *decolar.Endpoints, wg *sync.WaitGroup, errc chan error, logger log.Logger, debug bool) {
 
 	// Provide the transport specific request decoder and response encoder.
 	// The goa http package has built-in support for JSON, XML and gob.
 	// Other encodings can be used by providing the corresponding functions,
 	// see goa.design/implement/encoding.
 	var (
-		dec = goahttp.RequestDecoder
-		enc = goahttp.ResponseEncoder
+		dec = goaHttp.RequestDecoder
+		enc = goaHttp.ResponseEncoder
 	)
 
 	// Build the service HTTP request multiplexer and configure it to serve
 	// HTTP requests to the service endpoints.
-	var mux goahttp.Muxer
+	var mux goaHttp.Muxer
 	{
-		mux = goahttp.NewMuxer()
+		mux = goaHttp.NewMuxer()
 	}
 
 	// Wrap the endpoints with the transport specific layers. The generated
@@ -44,35 +44,43 @@ func handleHTTPServer(ctx context.Context, u *url.URL, paisEndpoints *pais.Endpo
 	// the service input and output data structures to HTTP requests and
 	// responses.
 	var (
-		paisCreatePaisHandler *kithttp.Server
-		paisServer            *paissvr.Server
+		decolarCreatePaisHandler     *kitHttp.Server
+		decolarCreateCompaniaHandler *kitHttp.Server
+		decolarServer                *decolarSvr.Server
 	)
 	{
 		eh := errorHandler(logger)
-		paisCreatePaisHandler = kithttp.NewServer(
-			endpoint.Endpoint(paisEndpoints.CreatePais),
-			paiskitsvr.DecodeCreatePaisRequest(mux, dec),
-			paiskitsvr.EncodeCreatePaisResponse(enc),
-			kithttp.ServerErrorEncoder(paiskitsvr.EncodeCreatePaisError(enc, nil)),
+		decolarCreatePaisHandler = kitHttp.NewServer(
+			decolarEndpoints.CreatePais,
+			decolarKitSvr.DecodeCreatePaisRequest(mux, dec),
+			decolarKitSvr.EncodeCreatePaisResponse(enc),
+			kitHttp.ServerErrorEncoder(decolarKitSvr.EncodeCreatePaisError(enc, nil)),
 		)
-		paisServer = paissvr.New(paisEndpoints, mux, dec, enc, eh, nil)
+		decolarCreateCompaniaHandler = kitHttp.NewServer(
+			decolarEndpoints.CreateCompania,
+			decolarKitSvr.DecodeCreateCompaniaRequest(mux, dec),
+			decolarKitSvr.EncodeCreateCompaniaResponse(enc),
+			kitHttp.ServerErrorEncoder(decolarKitSvr.EncodeCreateCompaniaError(enc, nil)),
+		)
+		decolarServer = decolarSvr.New(decolarEndpoints, mux, dec, enc, eh, nil)
 	}
 
 	// Configure the mux.
-	paiskitsvr.MountCreatePaisHandler(mux, paisCreatePaisHandler)
+	decolarKitSvr.MountCreatePaisHandler(mux, decolarCreatePaisHandler)
+	decolarKitSvr.MountCreateCompaniaHandler(mux, decolarCreateCompaniaHandler)
 
 	// Wrap the multiplexer with additional middlewares. Middlewares mounted
 	// here apply to all the service endpoints.
 	var handler http.Handler = mux
 	{
-		handler = httpmdlwr.Log(logger)(handler)
-		handler = httpmdlwr.RequestID()(handler)
+		handler = httpMdlwr.Log(logger)(handler)
+		handler = httpMdlwr.RequestID()(handler)
 	}
 
 	// Start HTTP server using default configuration, change the code to
 	// configure the server as required by your service.
 	srv := &http.Server{Addr: u.Host, Handler: handler}
-	for _, m := range paisServer.Mounts {
+	for _, m := range decolarServer.Mounts {
 		logger.Log("info", fmt.Sprintf("HTTP %q mounted on %s %s", m.Method, m.Verb, m.Pattern))
 	}
 

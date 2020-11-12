@@ -1,18 +1,55 @@
 openapi: 3.0.3
 info:
-  title: Dojo-1 Service
-  description: Dojo-1 HTTP service
+  title: Decolar Service
+  description: Decolar HTTP service
   version: "1.0"
 servers:
 - url: http://localhost:3333
   description: hosts for Dojo-1 Service.
 paths:
+  /compania:
+    post:
+      tags:
+      - decolar
+      summary: create_compania decolar
+      operationId: decolar#create_compania
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCompaniaRequestBody'
+            example:
+              nome: "5"
+              pais_id: 3F59C655-AFF8-EAB8-FA17-44E154EF0557
+      responses:
+        "201":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CompaniaDTO'
+              example:
+                created_at: Recusandae saepe qui et est.
+                id: Qui nobis.
+                nome: Maiores perspiciatis veritatis autem dolorem expedita.
+                pais_id: Suscipit enim voluptatem atque aliquam.
+        "400":
+          description: ""
+          content:
+            application/vnd.goa.error:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                id: 3F1FKVRR
+                message: Value of ID must be an integer
+                name: bad_request
   /pais:
     post:
       tags:
-      - pais
-      summary: create_pais pais
-      operationId: pais#create_pais
+      - decolar
+      summary: create_pais decolar
+      operationId: decolar#create_pais
       requestBody:
         required: true
         content:
@@ -20,7 +57,7 @@ paths:
             schema:
               $ref: '#/components/schemas/CreatePaisRequestBody'
             example:
-              nome: Culpa quod natus ex.
+              nome: Ipsam sed saepe assumenda tempore.
       responses:
         "201":
           description: ""
@@ -29,8 +66,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/PaisDTO'
               example:
-                id: Vero provident.
-                nome: Eos ipsum aut tempora.
+                id: Perferendis est.
+                nome: Occaecati eum quis.
         "400":
           description: ""
           content:
@@ -52,14 +89,56 @@ paths:
           description: File downloaded
 components:
   schemas:
+    CompaniaDTO:
+      type: object
+      properties:
+        created_at:
+          type: string
+          example: Qui rerum veritatis et blanditiis.
+        id:
+          type: string
+          example: Repellendus quia iste repudiandae perspiciatis nihil.
+        nome:
+          type: string
+          example: Eius voluptate porro quis maxime.
+        pais_id:
+          type: string
+          example: Modi consequatur et.
+      example:
+        created_at: Deleniti asperiores pariatur.
+        id: Facere ipsa nesciunt quasi.
+        nome: Iusto et facilis.
+        pais_id: Exercitationem quo quis modi.
+      required:
+      - id
+      - nome
+      - pais_id
+      - created_at
+    CreateCompaniaRequestBody:
+      type: object
+      properties:
+        nome:
+          type: string
+          example: ngg
+          minLength: 1
+        pais_id:
+          type: string
+          example: FF1D889F-0741-6290-783B-66E606310D86
+          format: uuid
+      example:
+        nome: t0
+        pais_id: 77EB7E77-465C-FCC6-CEC6-11F6C8938D24
+      required:
+      - nome
+      - pais_id
     CreatePaisRequestBody:
       type: object
       properties:
         nome:
           type: string
-          example: Necessitatibus dicta.
+          example: Natus quia officiis.
       example:
-        nome: Autem vel repellat in ratione rerum ut.
+        nome: Ullam voluptas laborum.
       required:
       - nome
     Error:
@@ -105,13 +184,13 @@ components:
       properties:
         id:
           type: string
-          example: Alias nam ut impedit pariatur expedita quis.
+          example: Est tenetur maiores omnis numquam.
         nome:
           type: string
-          example: Dignissimos eos adipisci accusamus.
+          example: A ullam veritatis quaerat.
       example:
-        id: Dolorem odit voluptatem vero harum velit quae.
-        nome: Adipisci et reprehenderit vero.
+        id: Optio laborum dolores sit amet culpa quisquam.
+        nome: In numquam deleniti.
       required:
       - id
       - nome
