@@ -25,6 +25,13 @@ type CreateCompaniaRequestBody struct {
 	PaisID string `form:"pais_id" json:"pais_id" xml:"pais_id"`
 }
 
+// CreateAeroportoRequestBody is the type of the "decolar" service
+// "create_aeroporto" endpoint HTTP request body.
+type CreateAeroportoRequestBody struct {
+	Nome   string `form:"nome" json:"nome" xml:"nome"`
+	PaisID string `form:"pais_id" json:"pais_id" xml:"pais_id"`
+}
+
 // CreatePaisResponseBody is the type of the "decolar" service "create_pais"
 // endpoint HTTP response body.
 type CreatePaisResponseBody struct {
@@ -35,6 +42,15 @@ type CreatePaisResponseBody struct {
 // CreateCompaniaResponseBody is the type of the "decolar" service
 // "create_compania" endpoint HTTP response body.
 type CreateCompaniaResponseBody struct {
+	ID        *string `form:"id,omitempty" json:"id,omitempty" xml:"id,omitempty"`
+	Nome      *string `form:"nome,omitempty" json:"nome,omitempty" xml:"nome,omitempty"`
+	PaisID    *string `form:"pais_id,omitempty" json:"pais_id,omitempty" xml:"pais_id,omitempty"`
+	CreatedAt *string `form:"created_at,omitempty" json:"created_at,omitempty" xml:"created_at,omitempty"`
+}
+
+// CreateAeroportoResponseBody is the type of the "decolar" service
+// "create_aeroporto" endpoint HTTP response body.
+type CreateAeroportoResponseBody struct {
 	ID        *string `form:"id,omitempty" json:"id,omitempty" xml:"id,omitempty"`
 	Nome      *string `form:"nome,omitempty" json:"nome,omitempty" xml:"nome,omitempty"`
 	PaisID    *string `form:"pais_id,omitempty" json:"pais_id,omitempty" xml:"pais_id,omitempty"`
@@ -77,6 +93,25 @@ type CreateCompaniaInvalidFieldsResponseBody struct {
 	Fault *bool `form:"fault,omitempty" json:"fault,omitempty" xml:"fault,omitempty"`
 }
 
+// CreateAeroportoInvalidFieldsResponseBody is the type of the "decolar"
+// service "create_aeroporto" endpoint HTTP response body for the
+// "invalid_fields" error.
+type CreateAeroportoInvalidFieldsResponseBody struct {
+	// Name is the name of this class of errors.
+	Name *string `form:"name,omitempty" json:"name,omitempty" xml:"name,omitempty"`
+	// ID is a unique identifier for this particular occurrence of the problem.
+	ID *string `form:"id,omitempty" json:"id,omitempty" xml:"id,omitempty"`
+	// Message is a human-readable explanation specific to this occurrence of the
+	// problem.
+	Message *string `form:"message,omitempty" json:"message,omitempty" xml:"message,omitempty"`
+	// Is the error temporary?
+	Temporary *bool `form:"temporary,omitempty" json:"temporary,omitempty" xml:"temporary,omitempty"`
+	// Is the error a timeout?
+	Timeout *bool `form:"timeout,omitempty" json:"timeout,omitempty" xml:"timeout,omitempty"`
+	// Is the error a server-side fault?
+	Fault *bool `form:"fault,omitempty" json:"fault,omitempty" xml:"fault,omitempty"`
+}
+
 // NewCreatePaisRequestBody builds the HTTP request body from the payload of
 // the "create_pais" endpoint of the "decolar" service.
 func NewCreatePaisRequestBody(p *decolar.CreatePaisDTO) *CreatePaisRequestBody {
@@ -90,6 +125,16 @@ func NewCreatePaisRequestBody(p *decolar.CreatePaisDTO) *CreatePaisRequestBody {
 // of the "create_compania" endpoint of the "decolar" service.
 func NewCreateCompaniaRequestBody(p *decolar.CreateCompaniaDTO) *CreateCompaniaRequestBody {
 	body := &CreateCompaniaRequestBody{
+		Nome:   p.Nome,
+		PaisID: p.PaisID,
+	}
+	return body
+}
+
+// NewCreateAeroportoRequestBody builds the HTTP request body from the payload
+// of the "create_aeroporto" endpoint of the "decolar" service.
+func NewCreateAeroportoRequestBody(p *decolar.CreateAeroportoDTO) *CreateAeroportoRequestBody {
+	body := &CreateAeroportoRequestBody{
 		Nome:   p.Nome,
 		PaisID: p.PaisID,
 	}
@@ -150,6 +195,34 @@ func NewCreateCompaniaInvalidFields(body *CreateCompaniaInvalidFieldsResponseBod
 	return v
 }
 
+// NewCreateAeroportoAeroportoDTOCreated builds a "decolar" service
+// "create_aeroporto" endpoint result from a HTTP "Created" response.
+func NewCreateAeroportoAeroportoDTOCreated(body *CreateAeroportoResponseBody) *decolar.AeroportoDTO {
+	v := &decolar.AeroportoDTO{
+		ID:        *body.ID,
+		Nome:      *body.Nome,
+		PaisID:    *body.PaisID,
+		CreatedAt: *body.CreatedAt,
+	}
+
+	return v
+}
+
+// NewCreateAeroportoInvalidFields builds a decolar service create_aeroporto
+// endpoint invalid_fields error.
+func NewCreateAeroportoInvalidFields(body *CreateAeroportoInvalidFieldsResponseBody) *goa.ServiceError {
+	v := &goa.ServiceError{
+		Name:      *body.Name,
+		ID:        *body.ID,
+		Message:   *body.Message,
+		Temporary: *body.Temporary,
+		Timeout:   *body.Timeout,
+		Fault:     *body.Fault,
+	}
+
+	return v
+}
+
 // ValidateCreatePaisResponseBody runs the validations defined on
 // create_pais_response_body
 func ValidateCreatePaisResponseBody(body *CreatePaisResponseBody) (err error) {
@@ -165,6 +238,24 @@ func ValidateCreatePaisResponseBody(body *CreatePaisResponseBody) (err error) {
 // ValidateCreateCompaniaResponseBody runs the validations defined on
 // create_compania_response_body
 func ValidateCreateCompaniaResponseBody(body *CreateCompaniaResponseBody) (err error) {
+	if body.ID == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("id", "body"))
+	}
+	if body.Nome == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("nome", "body"))
+	}
+	if body.PaisID == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("pais_id", "body"))
+	}
+	if body.CreatedAt == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("created_at", "body"))
+	}
+	return
+}
+
+// ValidateCreateAeroportoResponseBody runs the validations defined on
+// create_aeroporto_response_body
+func ValidateCreateAeroportoResponseBody(body *CreateAeroportoResponseBody) (err error) {
 	if body.ID == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("id", "body"))
 	}
@@ -207,6 +298,30 @@ func ValidateCreatePaisInvalidFieldsResponseBody(body *CreatePaisInvalidFieldsRe
 // ValidateCreateCompaniaInvalidFieldsResponseBody runs the validations defined
 // on create_compania_invalid_fields_response_body
 func ValidateCreateCompaniaInvalidFieldsResponseBody(body *CreateCompaniaInvalidFieldsResponseBody) (err error) {
+	if body.Name == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("name", "body"))
+	}
+	if body.ID == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("id", "body"))
+	}
+	if body.Message == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("message", "body"))
+	}
+	if body.Temporary == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("temporary", "body"))
+	}
+	if body.Timeout == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("timeout", "body"))
+	}
+	if body.Fault == nil {
+		err = goa.MergeErrors(err, goa.MissingFieldError("fault", "body"))
+	}
+	return
+}
+
+// ValidateCreateAeroportoInvalidFieldsResponseBody runs the validations
+// defined on create_aeroporto_invalid_fields_response_body
+func ValidateCreateAeroportoInvalidFieldsResponseBody(body *CreateAeroportoInvalidFieldsResponseBody) (err error) {
 	if body.Name == nil {
 		err = goa.MergeErrors(err, goa.MissingFieldError("name", "body"))
 	}

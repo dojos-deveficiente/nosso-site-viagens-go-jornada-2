@@ -193,3 +193,91 @@ func DecodeCreateCompaniaResponse(decoder func(*http.Response) goahttp.Decoder, 
 		}
 	}
 }
+
+// BuildCreateAeroportoRequest instantiates a HTTP request object with method
+// and path set to call the "decolar" service "create_aeroporto" endpoint
+func (c *Client) BuildCreateAeroportoRequest(ctx context.Context, v interface{}) (*http.Request, error) {
+	u := &url.URL{Scheme: c.scheme, Host: c.host, Path: CreateAeroportoDecolarPath()}
+	req, err := http.NewRequest("POST", u.String(), nil)
+	if err != nil {
+		return nil, goahttp.ErrInvalidURL("decolar", "create_aeroporto", u.String(), err)
+	}
+	if ctx != nil {
+		req = req.WithContext(ctx)
+	}
+
+	return req, nil
+}
+
+// EncodeCreateAeroportoRequest returns an encoder for requests sent to the
+// decolar create_aeroporto server.
+func EncodeCreateAeroportoRequest(encoder func(*http.Request) goahttp.Encoder) func(*http.Request, interface{}) error {
+	return func(req *http.Request, v interface{}) error {
+		p, ok := v.(*decolar.CreateAeroportoDTO)
+		if !ok {
+			return goahttp.ErrInvalidType("decolar", "create_aeroporto", "*decolar.CreateAeroportoDTO", v)
+		}
+		body := NewCreateAeroportoRequestBody(p)
+		if err := encoder(req).Encode(&body); err != nil {
+			return goahttp.ErrEncodingError("decolar", "create_aeroporto", err)
+		}
+		return nil
+	}
+}
+
+// DecodeCreateAeroportoResponse returns a decoder for responses returned by
+// the decolar create_aeroporto endpoint. restoreBody controls whether the
+// response body should be restored after having been read.
+// DecodeCreateAeroportoResponse may return the following errors:
+//	- "invalid_fields" (type *goa.ServiceError): http.StatusBadRequest
+//	- error: internal error
+func DecodeCreateAeroportoResponse(decoder func(*http.Response) goahttp.Decoder, restoreBody bool) func(*http.Response) (interface{}, error) {
+	return func(resp *http.Response) (interface{}, error) {
+		if restoreBody {
+			b, err := ioutil.ReadAll(resp.Body)
+			if err != nil {
+				return nil, err
+			}
+			resp.Body = ioutil.NopCloser(bytes.NewBuffer(b))
+			defer func() {
+				resp.Body = ioutil.NopCloser(bytes.NewBuffer(b))
+			}()
+		} else {
+			defer resp.Body.Close()
+		}
+		switch resp.StatusCode {
+		case http.StatusCreated:
+			var (
+				body CreateAeroportoResponseBody
+				err  error
+			)
+			err = decoder(resp).Decode(&body)
+			if err != nil {
+				return nil, goahttp.ErrDecodingError("decolar", "create_aeroporto", err)
+			}
+			err = ValidateCreateAeroportoResponseBody(&body)
+			if err != nil {
+				return nil, goahttp.ErrValidationError("decolar", "create_aeroporto", err)
+			}
+			res := NewCreateAeroportoAeroportoDTOCreated(&body)
+			return res, nil
+		case http.StatusBadRequest:
+			var (
+				body CreateAeroportoInvalidFieldsResponseBody
+				err  error
+			)
+			err = decoder(resp).Decode(&body)
+			if err != nil {
+				return nil, goahttp.ErrDecodingError("decolar", "create_aeroporto", err)
+			}
+			err = ValidateCreateAeroportoInvalidFieldsResponseBody(&body)
+			if err != nil {
+				return nil, goahttp.ErrValidationError("decolar", "create_aeroporto", err)
+			}
+			return nil, NewCreateAeroportoInvalidFields(&body)
+		default:
+			body, _ := ioutil.ReadAll(resp.Body)
+			return nil, goahttp.ErrInvalidResponse("decolar", "create_aeroporto", resp.StatusCode, string(body))
+		}
+	}
+}

@@ -65,3 +65,28 @@ func EncodeCreateCompaniaError(encoder func(context.Context, http.ResponseWriter
 		enc(ctx, w, err)
 	}
 }
+
+// EncodeCreateAeroportoResponse returns a go-kit EncodeResponseFunc suitable
+// for encoding decolar create_aeroporto responses.
+func EncodeCreateAeroportoResponse(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) kithttp.EncodeResponseFunc {
+	return server.EncodeCreateAeroportoResponse(encoder)
+}
+
+// DecodeCreateAeroportoRequest returns a go-kit DecodeRequestFunc suitable for
+// decoding decolar create_aeroporto requests.
+func DecodeCreateAeroportoRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) kithttp.DecodeRequestFunc {
+	dec := server.DecodeCreateAeroportoRequest(mux, decoder)
+	return func(ctx context.Context, r *http.Request) (interface{}, error) {
+		r = r.WithContext(ctx)
+		return dec(r)
+	}
+}
+
+// EncodeCreateAeroportoError returns a go-kit EncodeResponseFunc suitable for
+// encoding errors returned by the decolar create_aeroporto endpoint.
+func EncodeCreateAeroportoError(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder, formatter func(err error) goahttp.Statuser) kithttp.ErrorEncoder {
+	enc := server.EncodeCreateAeroportoError(encoder, formatter)
+	return func(ctx context.Context, err error, w http.ResponseWriter) {
+		enc(ctx, w, err)
+	}
+}

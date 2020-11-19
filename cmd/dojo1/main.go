@@ -15,6 +15,7 @@ import (
 	kitLog "github.com/go-kit/kit/log"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
+	"gorm.io/gorm/schema"
 
 	decolarGen "github.com/selmison/dojo-1/gen/decolar"
 
@@ -51,15 +52,20 @@ func main() {
 	)
 	{
 		var err error
-		repo, err = gorm.Open(sqlite.Open(*dsnF), &gorm.Config{
-			SkipDefaultTransaction: true,
-		})
+		repo, err = gorm.Open(sqlite.Open(*dsnF),
+			&gorm.Config{
+				NamingStrategy: schema.NamingStrategy{
+					SingularTable: true,
+				},
+				SkipDefaultTransaction: true,
+			})
 		if err != nil {
 			panic("failed to connect database")
 		}
 		if err := repo.AutoMigrate(
 			&decolar.Pais{},
 			&decolar.Compania{},
+			&decolar.Aeroporto{},
 		); err != nil {
 			log.Fatalf("db init: %v", err)
 		}
@@ -73,6 +79,7 @@ func main() {
 	)
 	{
 		decolarEndpoints = decolarGen.NewEndpoints(decolarSvc)
+		decolarEndpoints.Use(ValidationMiddleware(repo))
 	}
 
 	// Create channel used by both the signal handler and server goroutines

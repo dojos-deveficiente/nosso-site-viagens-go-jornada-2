@@ -146,3 +146,68 @@ func EncodeCreateCompaniaError(encoder func(context.Context, http.ResponseWriter
 		}
 	}
 }
+
+// EncodeCreateAeroportoResponse returns an encoder for responses returned by
+// the decolar create_aeroporto endpoint.
+func EncodeCreateAeroportoResponse(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder) func(context.Context, http.ResponseWriter, interface{}) error {
+	return func(ctx context.Context, w http.ResponseWriter, v interface{}) error {
+		res := v.(*decolar.AeroportoDTO)
+		enc := encoder(ctx, w)
+		body := NewCreateAeroportoResponseBody(res)
+		w.WriteHeader(http.StatusCreated)
+		return enc.Encode(body)
+	}
+}
+
+// DecodeCreateAeroportoRequest returns a decoder for requests sent to the
+// decolar create_aeroporto endpoint.
+func DecodeCreateAeroportoRequest(mux goahttp.Muxer, decoder func(*http.Request) goahttp.Decoder) func(*http.Request) (interface{}, error) {
+	return func(r *http.Request) (interface{}, error) {
+		var (
+			body CreateAeroportoRequestBody
+			err  error
+		)
+		err = decoder(r).Decode(&body)
+		if err != nil {
+			if err == io.EOF {
+				return nil, goa.MissingPayloadError()
+			}
+			return nil, goa.DecodePayloadError(err.Error())
+		}
+		err = ValidateCreateAeroportoRequestBody(&body)
+		if err != nil {
+			return nil, err
+		}
+		payload := NewCreateAeroportoDTO(&body)
+
+		return payload, nil
+	}
+}
+
+// EncodeCreateAeroportoError returns an encoder for errors returned by the
+// create_aeroporto decolar endpoint.
+func EncodeCreateAeroportoError(encoder func(context.Context, http.ResponseWriter) goahttp.Encoder, formatter func(err error) goahttp.Statuser) func(context.Context, http.ResponseWriter, error) error {
+	encodeError := goahttp.ErrorEncoder(encoder, formatter)
+	return func(ctx context.Context, w http.ResponseWriter, v error) error {
+		en, ok := v.(ErrorNamer)
+		if !ok {
+			return encodeError(ctx, w, v)
+		}
+		switch en.ErrorName() {
+		case "invalid_fields":
+			res := v.(*goa.ServiceError)
+			enc := encoder(ctx, w)
+			var body interface{}
+			if formatter != nil {
+				body = formatter(res)
+			} else {
+				body = NewCreateAeroportoInvalidFieldsResponseBody(res)
+			}
+			w.Header().Set("goa-error", "invalid_fields")
+			w.WriteHeader(http.StatusBadRequest)
+			return enc.Encode(body)
+		default:
+			return encodeError(ctx, w, v)
+		}
+	}
+}

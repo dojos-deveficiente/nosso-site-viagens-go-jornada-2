@@ -19,6 +19,8 @@ type Service interface {
 	CreatePais(context.Context, *CreatePaisDTO) (res *PaisDTO, err error)
 	// CreateCompania implements create_compania.
 	CreateCompania(context.Context, *CreateCompaniaDTO) (res *CompaniaDTO, err error)
+	// CreateAeroporto implements create_aeroporto.
+	CreateAeroporto(context.Context, *CreateAeroportoDTO) (res *AeroportoDTO, err error)
 }
 
 // ServiceName is the name of the service as defined in the design. This is the
@@ -29,7 +31,7 @@ const ServiceName = "decolar"
 // MethodNames lists the service method names as defined in the design. These
 // are the same values that are set in the endpoint request contexts under the
 // MethodKey key.
-var MethodNames = [2]string{"create_pais", "create_compania"}
+var MethodNames = [3]string{"create_pais", "create_compania", "create_aeroporto"}
 
 // CreatePaisDTO is the payload type of the decolar service create_pais method.
 type CreatePaisDTO struct {
@@ -51,6 +53,22 @@ type CreateCompaniaDTO struct {
 
 // CompaniaDTO is the result type of the decolar service create_compania method.
 type CompaniaDTO struct {
+	ID        string
+	Nome      string
+	PaisID    string
+	CreatedAt string
+}
+
+// CreateAeroportoDTO is the payload type of the decolar service
+// create_aeroporto method.
+type CreateAeroportoDTO struct {
+	Nome   string
+	PaisID string
+}
+
+// AeroportoDTO is the result type of the decolar service create_aeroporto
+// method.
+type AeroportoDTO struct {
 	ID        string
 	Nome      string
 	PaisID    string

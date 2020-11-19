@@ -51,3 +51,21 @@ func DecodeCreateCompaniaResponse(decoder func(*http.Response) goahttp.Decoder) 
 		return dec(resp)
 	}
 }
+
+// EncodeCreateAeroportoRequest returns a go-kit EncodeRequestFunc suitable for
+// encoding decolar create_aeroporto requests.
+func EncodeCreateAeroportoRequest(encoder func(*http.Request) goahttp.Encoder) kithttp.EncodeRequestFunc {
+	enc := client.EncodeCreateAeroportoRequest(encoder)
+	return func(_ context.Context, r *http.Request, v interface{}) error {
+		return enc(r, v)
+	}
+}
+
+// DecodeCreateAeroportoResponse returns a go-kit DecodeResponseFunc suitable
+// for decoding decolar create_aeroporto responses.
+func DecodeCreateAeroportoResponse(decoder func(*http.Response) goahttp.Decoder) kithttp.DecodeResponseFunc {
+	dec := client.DecodeCreateAeroportoResponse(decoder, false)
+	return func(ctx context.Context, resp *http.Response) (interface{}, error) {
+		return dec(resp)
+	}
+}

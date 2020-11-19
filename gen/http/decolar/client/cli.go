@@ -24,7 +24,7 @@ func BuildCreatePaisPayload(decolarCreatePaisBody string) (*decolar.CreatePaisDT
 	{
 		err = json.Unmarshal([]byte(decolarCreatePaisBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"nome\": \"Ipsam sed saepe assumenda tempore.\"\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"nome\": \"Atque aliquam delectus.\"\n   }'")
 		}
 	}
 	v := &decolar.CreatePaisDTO{
@@ -42,7 +42,7 @@ func BuildCreateCompaniaPayload(decolarCreateCompaniaBody string) (*decolar.Crea
 	{
 		err = json.Unmarshal([]byte(decolarCreateCompaniaBody), &body)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"nome\": \"5\",\n      \"pais_id\": \"3F59C655-AFF8-EAB8-FA17-44E154EF0557\"\n   }'")
+			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"nome\": \"2u1\",\n      \"pais_id\": \"288BFD74-D973-18B5-FAA5-29ADF4569AC7\"\n   }'")
 		}
 		if utf8.RuneCountInString(body.Nome) < 1 {
 			err = goa.MergeErrors(err, goa.InvalidLengthError("body.nome", body.Nome, utf8.RuneCountInString(body.Nome), 1, true))
@@ -54,6 +54,33 @@ func BuildCreateCompaniaPayload(decolarCreateCompaniaBody string) (*decolar.Crea
 		}
 	}
 	v := &decolar.CreateCompaniaDTO{
+		Nome:   body.Nome,
+		PaisID: body.PaisID,
+	}
+
+	return v, nil
+}
+
+// BuildCreateAeroportoPayload builds the payload for the decolar
+// create_aeroporto endpoint from CLI flags.
+func BuildCreateAeroportoPayload(decolarCreateAeroportoBody string) (*decolar.CreateAeroportoDTO, error) {
+	var err error
+	var body CreateAeroportoRequestBody
+	{
+		err = json.Unmarshal([]byte(decolarCreateAeroportoBody), &body)
+		if err != nil {
+			return nil, fmt.Errorf("invalid JSON for body, \nerror: %s, \nexample of valid JSON:\n%s", err, "'{\n      \"nome\": \"7p\",\n      \"pais_id\": \"E330131A-4516-F39A-1E98-7CBF64E7E788\"\n   }'")
+		}
+		if utf8.RuneCountInString(body.Nome) < 1 {
+			err = goa.MergeErrors(err, goa.InvalidLengthError("body.nome", body.Nome, utf8.RuneCountInString(body.Nome), 1, true))
+		}
+		err = goa.MergeErrors(err, goa.ValidateFormat("body.pais_id", body.PaisID, goa.FormatUUID))
+
+		if err != nil {
+			return nil, err
+		}
+	}
+	v := &decolar.CreateAeroportoDTO{
 		Nome:   body.Nome,
 		PaisID: body.PaisID,
 	}

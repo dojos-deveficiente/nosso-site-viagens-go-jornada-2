@@ -25,6 +25,9 @@ func (s *service) CreatePais(_ context.Context, dto *decolarGen.CreatePaisDTO) (
 		ID:   uuid.New().String(),
 		Nome: strings.TrimSpace(dto.Nome),
 	}
+	if result := s.repo.Create(&pais); result.Error != nil {
+		return nil, result.Error
+	}
 	res = &decolarGen.PaisDTO{
 		ID:   pais.ID,
 		Nome: pais.Nome,

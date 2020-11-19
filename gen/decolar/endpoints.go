@@ -15,15 +15,17 @@ import (
 
 // Endpoints wraps the "decolar" service endpoints.
 type Endpoints struct {
-	CreatePais     endpoint.Endpoint
-	CreateCompania endpoint.Endpoint
+	CreatePais      endpoint.Endpoint
+	CreateCompania  endpoint.Endpoint
+	CreateAeroporto endpoint.Endpoint
 }
 
 // NewEndpoints wraps the methods of the "decolar" service with endpoints.
 func NewEndpoints(s Service) *Endpoints {
 	return &Endpoints{
-		CreatePais:     NewCreatePaisEndpoint(s),
-		CreateCompania: NewCreateCompaniaEndpoint(s),
+		CreatePais:      NewCreatePaisEndpoint(s),
+		CreateCompania:  NewCreateCompaniaEndpoint(s),
+		CreateAeroporto: NewCreateAeroportoEndpoint(s),
 	}
 }
 
@@ -31,6 +33,7 @@ func NewEndpoints(s Service) *Endpoints {
 func (e *Endpoints) Use(m func(endpoint.Endpoint) endpoint.Endpoint) {
 	e.CreatePais = m(e.CreatePais)
 	e.CreateCompania = m(e.CreateCompania)
+	e.CreateAeroporto = m(e.CreateAeroporto)
 }
 
 // NewCreatePaisEndpoint returns an endpoint function that calls the method
@@ -48,5 +51,14 @@ func NewCreateCompaniaEndpoint(s Service) endpoint.Endpoint {
 	return func(ctx context.Context, req interface{}) (interface{}, error) {
 		p := req.(*CreateCompaniaDTO)
 		return s.CreateCompania(ctx, p)
+	}
+}
+
+// NewCreateAeroportoEndpoint returns an endpoint function that calls the
+// method "create_aeroporto" of service "decolar".
+func NewCreateAeroportoEndpoint(s Service) endpoint.Endpoint {
+	return func(ctx context.Context, req interface{}) (interface{}, error) {
+		p := req.(*CreateAeroportoDTO)
+		return s.CreateAeroporto(ctx, p)
 	}
 }

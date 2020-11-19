@@ -25,6 +25,10 @@ type Client struct {
 	// create_compania endpoint.
 	CreateCompaniaDoer goahttp.Doer
 
+	// CreateAeroporto Doer is the HTTP client used to make requests to the
+	// create_aeroporto endpoint.
+	CreateAeroportoDoer goahttp.Doer
+
 	// RestoreResponseBody controls whether the response bodies are reset after
 	// decoding so they can be read again.
 	RestoreResponseBody bool
@@ -47,6 +51,7 @@ func NewClient(
 	return &Client{
 		CreatePaisDoer:      doer,
 		CreateCompaniaDoer:  doer,
+		CreateAeroportoDoer: doer,
 		RestoreResponseBody: restoreBody,
 		scheme:              scheme,
 		host:                host,
@@ -98,6 +103,30 @@ func (c *Client) CreateCompania() endpoint.Endpoint {
 		resp, err := c.CreateCompaniaDoer.Do(req)
 		if err != nil {
 			return nil, goahttp.ErrRequestError("decolar", "create_compania", err)
+		}
+		return decodeResponse(resp)
+	}
+}
+
+// CreateAeroporto returns an endpoint that makes HTTP requests to the decolar
+// service create_aeroporto server.
+func (c *Client) CreateAeroporto() endpoint.Endpoint {
+	var (
+		encodeRequest  = EncodeCreateAeroportoRequest(c.encoder)
+		decodeResponse = DecodeCreateAeroportoResponse(c.decoder, c.RestoreResponseBody)
+	)
+	return func(ctx context.Context, v interface{}) (interface{}, error) {
+		req, err := c.BuildCreateAeroportoRequest(ctx, v)
+		if err != nil {
+			return nil, err
+		}
+		err = encodeRequest(req, v)
+		if err != nil {
+			return nil, err
+		}
+		resp, err := c.CreateAeroportoDoer.Do(req)
+		if err != nil {
+			return nil, goahttp.ErrRequestError("decolar", "create_aeroporto", err)
 		}
 		return decodeResponse(resp)
 	}

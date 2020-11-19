@@ -13,6 +13,37 @@ produces:
 - application/xml
 - application/gob
 paths:
+  /aeroporto:
+    post:
+      tags:
+      - decolar
+      summary: create_aeroporto decolar
+      operationId: decolar#create_aeroporto
+      parameters:
+      - name: create_aeroporto_request_body
+        in: body
+        required: true
+        schema:
+          $ref: '#/definitions/DecolarCreateAeroportoRequestBody'
+          required:
+          - nome
+          - pais_id
+      responses:
+        "201":
+          description: Created response.
+          schema:
+            $ref: '#/definitions/DecolarCreateAeroportoResponseBody'
+            required:
+            - id
+            - nome
+            - pais_id
+            - created_at
+        "400":
+          description: Bad Request response.
+          schema:
+            $ref: '#/definitions/DecolarCreateAeroportoInvalidFieldsResponseBody'
+      schemes:
+      - http
   /compania:
     post:
       tags:
@@ -86,6 +117,93 @@ paths:
       schemes:
       - http
 definitions:
+  DecolarCreateAeroportoInvalidFieldsResponseBody:
+    title: 'Mediatype identifier: application/vnd.goa.error; view=default'
+    type: object
+    properties:
+      fault:
+        type: boolean
+        description: Is the error a server-side fault?
+        example: true
+      id:
+        type: string
+        description: ID is a unique identifier for this particular occurrence of the problem.
+        example: 123abc
+      message:
+        type: string
+        description: Message is a human-readable explanation specific to this occurrence of the problem.
+        example: parameter 'p' must be an integer
+      name:
+        type: string
+        description: Name is the name of this class of errors.
+        example: bad_request
+      temporary:
+        type: boolean
+        description: Is the error temporary?
+        example: false
+      timeout:
+        type: boolean
+        description: Is the error a timeout?
+        example: false
+    description: create_aeroporto_invalid_fields_response_body result type (default view)
+    example:
+      fault: true
+      id: 123abc
+      message: parameter 'p' must be an integer
+      name: bad_request
+      temporary: true
+      timeout: false
+    required:
+    - name
+    - id
+    - message
+    - temporary
+    - timeout
+    - fault
+  DecolarCreateAeroportoRequestBody:
+    title: DecolarCreateAeroportoRequestBody
+    type: object
+    properties:
+      nome:
+        type: string
+        example: 7lv
+        minLength: 1
+      pais_id:
+        type: string
+        example: 74C53540-E974-ABFF-2565-6BF99F9017B2
+        format: uuid
+    example:
+      nome: ozy
+      pais_id: FB1E8AC6-4FA4-C883-ED5A-54960E88F5FE
+    required:
+    - nome
+    - pais_id
+  DecolarCreateAeroportoResponseBody:
+    title: DecolarCreateAeroportoResponseBody
+    type: object
+    properties:
+      created_at:
+        type: string
+        example: Dolores numquam voluptates voluptate aspernatur qui voluptatibus.
+      id:
+        type: string
+        example: Qui iusto et facilis.
+      nome:
+        type: string
+        example: Exercitationem quo quis modi.
+      pais_id:
+        type: string
+        example: Deleniti asperiores pariatur.
+    example:
+      created_at: Voluptatibus nisi tempore.
+      id: Animi quod harum maxime ipsa est.
+      nome: Dolorem maiores commodi dolorem.
+      pais_id: Sunt in nesciunt.
+    required:
+    - id
+    - nome
+    - pais_id
+    - created_at
   DecolarCreateCompaniaInvalidFieldsResponseBody:
     title: 'Mediatype identifier: application/vnd.goa.error; view=default'
     type: object
@@ -121,7 +239,7 @@ definitions:
       message: parameter 'p' must be an integer
       name: bad_request
       temporary: false
-      timeout: false
+      timeout: true
     required:
     - name
     - id
@@ -135,15 +253,15 @@ definitions:
     properties:
       nome:
         type: string
-        example: g
+        example: g0j
         minLength: 1
       pais_id:
         type: string
-        example: 288BFD74-D973-18B5-FAA5-29ADF4569AC7
+        example: FF1D889F-0741-6290-783B-66E606310D86
         format: uuid
     example:
-      nome: "0"
-      pais_id: E330131A-4516-F39A-1E98-7CBF64E7E788
+      nome: vc
+      pais_id: 77EB7E77-465C-FCC6-CEC6-11F6C8938D24
     required:
     - nome
     - pais_id
@@ -153,21 +271,21 @@ definitions:
     properties:
       created_at:
         type: string
-        example: Officiis sapiente facilis quos.
+        example: Deleniti ut ducimus esse.
       id:
         type: string
-        example: Libero voluptates ut nulla debitis.
+        example: Maiores omnis numquam at a.
       nome:
         type: string
-        example: Qui facilis quos delectus.
+        example: Veritatis quaerat maiores optio.
       pais_id:
         type: string
-        example: Et ut temporibus quo eligendi.
+        example: Dolores sit amet culpa quisquam doloremque in.
     example:
-      created_at: Sit omnis.
-      id: Eaque porro excepturi qui in quae.
-      nome: A repellendus quia dolores quia iusto.
-      pais_id: Aspernatur voluptatem neque iusto eos cumque.
+      created_at: Veritatis eum.
+      id: Nobis enim et quibusdam similique.
+      nome: Doloremque ratione excepturi.
+      pais_id: Corrupti ut ut ut adipisci similique.
     required:
     - id
     - nome
@@ -196,19 +314,19 @@ definitions:
       temporary:
         type: boolean
         description: Is the error temporary?
-        example: true
+        example: false
       timeout:
         type: boolean
         description: Is the error a timeout?
-        example: true
+        example: false
     description: create_pais_invalid_fields_response_body result type (default view)
     example:
       fault: true
       id: 123abc
       message: parameter 'p' must be an integer
       name: bad_request
-      temporary: false
-      timeout: true
+      temporary: true
+      timeout: false
     required:
     - name
     - id
@@ -222,9 +340,9 @@ definitions:
     properties:
       nome:
         type: string
-        example: Possimus placeat vel vero.
+        example: Et natus quia.
     example:
-      nome: Eius et velit consectetur quasi dolores vel.
+      nome: Excepturi ullam voluptas laborum ratione est.
     required:
     - nome
   DecolarCreatePaisResponseBody:
@@ -233,13 +351,13 @@ definitions:
     properties:
       id:
         type: string
-        example: Nisi in quia voluptatem pariatur quia inventore.
+        example: Temporibus voluptas ut possimus.
       nome:
         type: string
-        example: Beatae dolor error ut.
+        example: Est sint est et at quia modi.
     example:
-      id: Id nihil voluptatem.
-      nome: Ea maiores molestiae culpa voluptatum itaque sed.
+      id: Adipisci cupiditate eaque.
+      nome: Distinctio dolor molestias dolor velit aut non.
     required:
     - id
     - nome

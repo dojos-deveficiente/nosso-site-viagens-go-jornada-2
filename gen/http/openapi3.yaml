@@ -7,6 +7,43 @@ servers:
 - url: http://localhost:3333
   description: hosts for Dojo-1 Service.
 paths:
+  /aeroporto:
+    post:
+      tags:
+      - decolar
+      summary: create_aeroporto decolar
+      operationId: decolar#create_aeroporto
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCompaniaRequestBody'
+            example:
+              nome: 7p
+              pais_id: E330131A-4516-F39A-1E98-7CBF64E7E788
+      responses:
+        "201":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CompaniaDTO'
+              example:
+                created_at: Voluptas impedit facilis et iste fugit.
+                id: Ipsum illum porro ut dolore nemo.
+                nome: Hic consequatur.
+                pais_id: Suscipit voluptatibus libero atque.
+        "400":
+          description: ""
+          content:
+            application/vnd.goa.error:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                id: 3F1FKVRR
+                message: Value of ID must be an integer
+                name: bad_request
   /compania:
     post:
       tags:
@@ -20,8 +57,8 @@ paths:
             schema:
               $ref: '#/components/schemas/CreateCompaniaRequestBody'
             example:
-              nome: "5"
-              pais_id: 3F59C655-AFF8-EAB8-FA17-44E154EF0557
+              nome: 2u1
+              pais_id: 288BFD74-D973-18B5-FAA5-29ADF4569AC7
       responses:
         "201":
           description: ""
@@ -30,10 +67,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/CompaniaDTO'
               example:
-                created_at: Recusandae saepe qui et est.
-                id: Qui nobis.
-                nome: Maiores perspiciatis veritatis autem dolorem expedita.
-                pais_id: Suscipit enim voluptatem atque aliquam.
+                created_at: Aspernatur voluptatem neque iusto eos cumque.
+                id: Eligendi eum officiis sapiente facilis quos.
+                nome: Eaque porro excepturi qui in quae.
+                pais_id: A repellendus quia dolores quia iusto.
         "400":
           description: ""
           content:
@@ -57,7 +94,7 @@ paths:
             schema:
               $ref: '#/components/schemas/CreatePaisRequestBody'
             example:
-              nome: Ipsam sed saepe assumenda tempore.
+              nome: Atque aliquam delectus.
       responses:
         "201":
           description: ""
@@ -66,8 +103,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/PaisDTO'
               example:
-                id: Perferendis est.
-                nome: Occaecati eum quis.
+                id: Saepe qui et est inventore nisi.
+                nome: Quia voluptatem pariatur quia inventore magni beatae.
         "400":
           description: ""
           content:
@@ -94,21 +131,21 @@ components:
       properties:
         created_at:
           type: string
-          example: Qui rerum veritatis et blanditiis.
+          example: Et aut molestiae culpa quia ea quos.
         id:
           type: string
-          example: Repellendus quia iste repudiandae perspiciatis nihil.
+          example: Et in.
         nome:
           type: string
-          example: Eius voluptate porro quis maxime.
+          example: Sint fuga ex et.
         pais_id:
           type: string
-          example: Modi consequatur et.
+          example: Quia quia optio quia.
       example:
-        created_at: Deleniti asperiores pariatur.
-        id: Facere ipsa nesciunt quasi.
-        nome: Iusto et facilis.
-        pais_id: Exercitationem quo quis modi.
+        created_at: Quasi quasi molestias.
+        id: Veniam est tempore delectus.
+        nome: Dolor iusto.
+        pais_id: Adipisci impedit.
       required:
       - id
       - nome
@@ -119,15 +156,15 @@ components:
       properties:
         nome:
           type: string
-          example: ngg
+          example: ru
           minLength: 1
         pais_id:
           type: string
-          example: FF1D889F-0741-6290-783B-66E606310D86
+          example: 2C91774A-6D4A-67B6-DC43-6AED849DACC1
           format: uuid
       example:
-        nome: t0
-        pais_id: 77EB7E77-465C-FCC6-CEC6-11F6C8938D24
+        nome: "6"
+        pais_id: 773F4E7F-A748-DF6D-4355-233071D2534A
       required:
       - nome
       - pais_id
@@ -136,9 +173,9 @@ components:
       properties:
         nome:
           type: string
-          example: Natus quia officiis.
+          example: Saepe placeat voluptate quisquam reprehenderit dolor.
       example:
-        nome: Ullam voluptas laborum.
+        nome: Qui est voluptas cumque.
       required:
       - nome
     Error:
@@ -147,7 +184,7 @@ components:
         fault:
           type: boolean
           description: Is the error a server-side fault?
-          example: true
+          example: false
         id:
           type: string
           description: ID is a unique identifier for this particular occurrence of the problem.
@@ -167,7 +204,7 @@ components:
         timeout:
           type: boolean
           description: Is the error a timeout?
-          example: false
+          example: true
       example:
         id: 3F1FKVRR
         message: Value of ID must be an integer
@@ -184,13 +221,13 @@ components:
       properties:
         id:
           type: string
-          example: Est tenetur maiores omnis numquam.
+          example: Veniam ea dolor provident officia aut.
         nome:
           type: string
-          example: A ullam veritatis quaerat.
+          example: Sed distinctio iusto placeat.
       example:
-        id: Optio laborum dolores sit amet culpa quisquam.
-        nome: In numquam deleniti.
+        id: Facere omnis unde ducimus qui repellendus.
+        nome: Et ut natus.
       required:
       - id
       - nome

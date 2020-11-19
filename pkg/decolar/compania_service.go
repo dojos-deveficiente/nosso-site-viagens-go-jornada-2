@@ -6,9 +6,18 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"gorm.io/gorm"
 
 	decolarGen "github.com/selmison/dojo-1/gen/decolar"
 )
+
+// Compania represents a single companhia.
+type Compania struct {
+	gorm.Model
+	ID     string `gorm:"primarykey"`
+	Nome   string
+	PaisID string
+}
 
 // CreateCompania implements create_companhia.
 func (s *service) CreateCompania(ctx context.Context, dto *decolarGen.CreateCompaniaDTO) (res *decolarGen.CompaniaDTO, err error) {

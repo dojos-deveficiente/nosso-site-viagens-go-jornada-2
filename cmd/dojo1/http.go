@@ -44,9 +44,10 @@ func handleHTTPServer(ctx context.Context, u *url.URL, decolarEndpoints *decolar
 	// the service input and output data structures to HTTP requests and
 	// responses.
 	var (
-		decolarCreatePaisHandler     *kitHttp.Server
-		decolarCreateCompaniaHandler *kitHttp.Server
-		decolarServer                *decolarSvr.Server
+		decolarCreatePaisHandler      *kitHttp.Server
+		decolarCreateCompaniaHandler  *kitHttp.Server
+		decolarCreateAeroportoHandler *kitHttp.Server
+		decolarServer                 *decolarSvr.Server
 	)
 	{
 		eh := errorHandler(logger)
@@ -62,12 +63,19 @@ func handleHTTPServer(ctx context.Context, u *url.URL, decolarEndpoints *decolar
 			decolarKitSvr.EncodeCreateCompaniaResponse(enc),
 			kitHttp.ServerErrorEncoder(decolarKitSvr.EncodeCreateCompaniaError(enc, nil)),
 		)
+		decolarCreateAeroportoHandler = kitHttp.NewServer(
+			decolarEndpoints.CreateAeroporto,
+			decolarKitSvr.DecodeCreateAeroportoRequest(mux, dec),
+			decolarKitSvr.EncodeCreateAeroportoResponse(enc),
+			kitHttp.ServerErrorEncoder(decolarKitSvr.EncodeCreateAeroportoError(enc, nil)),
+		)
 		decolarServer = decolarSvr.New(decolarEndpoints, mux, dec, enc, eh, nil)
 	}
 
 	// Configure the mux.
 	decolarKitSvr.MountCreatePaisHandler(mux, decolarCreatePaisHandler)
 	decolarKitSvr.MountCreateCompaniaHandler(mux, decolarCreateCompaniaHandler)
+	decolarKitSvr.MountCreateAeroportoHandler(mux, decolarCreateAeroportoHandler)
 
 	// Wrap the multiplexer with additional middlewares. Middlewares mounted
 	// here apply to all the service endpoints.

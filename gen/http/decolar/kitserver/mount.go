@@ -36,3 +36,15 @@ func MountCreateCompaniaHandler(mux goahttp.Muxer, h http.Handler) {
 	}
 	mux.Handle("POST", "/compania", f)
 }
+
+// MountCreateAeroportoHandler configures the mux to serve the "decolar"
+// service "create_aeroporto" endpoint.
+func MountCreateAeroportoHandler(mux goahttp.Muxer, h http.Handler) {
+	f, ok := h.(http.HandlerFunc)
+	if !ok {
+		f = func(w http.ResponseWriter, r *http.Request) {
+			h.ServeHTTP(w, r)
+		}
+	}
+	mux.Handle("POST", "/aeroporto", f)
+}

@@ -23,14 +23,14 @@ import (
 //    command (subcommand1|subcommand2|...)
 //
 func UsageCommands() string {
-	return `decolar (create-pais|create-compania)
+	return `decolar (create-pais|create-compania|create-aeroporto)
 `
 }
 
 // UsageExamples produces an example of a valid invocation of the CLI tool.
 func UsageExamples() string {
 	return os.Args[0] + ` decolar create-pais --body '{
-      "nome": "Ipsam sed saepe assumenda tempore."
+      "nome": "Atque aliquam delectus."
    }'` + "\n" +
 		""
 }
@@ -52,10 +52,14 @@ func ParseEndpoint(
 
 		decolarCreateCompaniaFlags    = flag.NewFlagSet("create-compania", flag.ExitOnError)
 		decolarCreateCompaniaBodyFlag = decolarCreateCompaniaFlags.String("body", "REQUIRED", "")
+
+		decolarCreateAeroportoFlags    = flag.NewFlagSet("create-aeroporto", flag.ExitOnError)
+		decolarCreateAeroportoBodyFlag = decolarCreateAeroportoFlags.String("body", "REQUIRED", "")
 	)
 	decolarFlags.Usage = decolarUsage
 	decolarCreatePaisFlags.Usage = decolarCreatePaisUsage
 	decolarCreateCompaniaFlags.Usage = decolarCreateCompaniaUsage
+	decolarCreateAeroportoFlags.Usage = decolarCreateAeroportoUsage
 
 	if err := flag.CommandLine.Parse(os.Args[1:]); err != nil {
 		return nil, nil, err
@@ -97,6 +101,9 @@ func ParseEndpoint(
 			case "create-compania":
 				epf = decolarCreateCompaniaFlags
 
+			case "create-aeroporto":
+				epf = decolarCreateAeroportoFlags
+
 			}
 
 		}
@@ -128,6 +135,9 @@ func ParseEndpoint(
 			case "create-compania":
 				endpoint = c.CreateCompania()
 				data, err = decolarc.BuildCreateCompaniaPayload(*decolarCreateCompaniaBodyFlag)
+			case "create-aeroporto":
+				endpoint = c.CreateAeroporto()
+				data, err = decolarc.BuildCreateAeroportoPayload(*decolarCreateAeroportoBodyFlag)
 			}
 		}
 	}
@@ -147,6 +157,7 @@ Usage:
 COMMAND:
     create-pais: CreatePais implements create_pais.
     create-compania: CreateCompania implements create_compania.
+    create-aeroporto: CreateAeroporto implements create_aeroporto.
 
 Additional help:
     %s decolar COMMAND --help
@@ -160,7 +171,7 @@ CreatePais implements create_pais.
 
 Example:
     `+os.Args[0]+` decolar create-pais --body '{
-      "nome": "Ipsam sed saepe assumenda tempore."
+      "nome": "Atque aliquam delectus."
    }'
 `, os.Args[0])
 }
@@ -173,8 +184,22 @@ CreateCompania implements create_compania.
 
 Example:
     `+os.Args[0]+` decolar create-compania --body '{
-      "nome": "5",
-      "pais_id": "3F59C655-AFF8-EAB8-FA17-44E154EF0557"
+      "nome": "2u1",
+      "pais_id": "288BFD74-D973-18B5-FAA5-29ADF4569AC7"
+   }'
+`, os.Args[0])
+}
+
+func decolarCreateAeroportoUsage() {
+	fmt.Fprintf(os.Stderr, `%s [flags] decolar create-aeroporto -body JSON
+
+CreateAeroporto implements create_aeroporto.
+    -body JSON: 
+
+Example:
+    `+os.Args[0]+` decolar create-aeroporto --body '{
+      "nome": "7p",
+      "pais_id": "E330131A-4516-F39A-1E98-7CBF64E7E788"
    }'
 `, os.Args[0])
 }

@@ -15,15 +15,17 @@ import (
 
 // Client is the "decolar" service client.
 type Client struct {
-	CreatePaisEndpoint     endpoint.Endpoint
-	CreateCompaniaEndpoint endpoint.Endpoint
+	CreatePaisEndpoint      endpoint.Endpoint
+	CreateCompaniaEndpoint  endpoint.Endpoint
+	CreateAeroportoEndpoint endpoint.Endpoint
 }
 
 // NewClient initializes a "decolar" service client given the endpoints.
-func NewClient(createPais, createCompania endpoint.Endpoint) *Client {
+func NewClient(createPais, createCompania, createAeroporto endpoint.Endpoint) *Client {
 	return &Client{
-		CreatePaisEndpoint:     createPais,
-		CreateCompaniaEndpoint: createCompania,
+		CreatePaisEndpoint:      createPais,
+		CreateCompaniaEndpoint:  createCompania,
+		CreateAeroportoEndpoint: createAeroporto,
 	}
 }
 
@@ -45,4 +47,15 @@ func (c *Client) CreateCompania(ctx context.Context, p *CreateCompaniaDTO) (res 
 		return
 	}
 	return ires.(*CompaniaDTO), nil
+}
+
+// CreateAeroporto calls the "create_aeroporto" endpoint of the "decolar"
+// service.
+func (c *Client) CreateAeroporto(ctx context.Context, p *CreateAeroportoDTO) (res *AeroportoDTO, err error) {
+	var ires interface{}
+	ires, err = c.CreateAeroportoEndpoint(ctx, p)
+	if err != nil {
+		return
+	}
+	return ires.(*AeroportoDTO), nil
 }

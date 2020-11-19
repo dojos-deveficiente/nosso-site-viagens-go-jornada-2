@@ -16,3 +16,8 @@ func CreatePaisDecolarPath() string {
 func CreateCompaniaDecolarPath() string {
 	return "/compania"
 }
+
+// CreateAeroportoDecolarPath returns the URL path to the decolar service create_aeroporto HTTP endpoint.
+func CreateAeroportoDecolarPath() string {
+	return "/aeroporto"
+}

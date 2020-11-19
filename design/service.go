@@ -30,4 +30,14 @@ var _ = Service("decolar", func() {
 			Response("invalid_fields", StatusBadRequest)
 		})
 	})
+
+	Method("create_aeroporto", func() {
+		Payload(CreateAeroportoDTO)
+		Result(AeroportoDTO)
+		HTTP(func() {
+			POST("/aeroporto")
+			Response(StatusCreated)
+			Response("invalid_fields", StatusBadRequest)
+		})
+	})
 })
