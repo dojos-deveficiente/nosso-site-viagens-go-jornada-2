@@ -15,7 +15,6 @@ import (
 	kitLog "github.com/go-kit/kit/log"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
-	"gorm.io/gorm/schema"
 
 	decolarGen "github.com/selmison/dojo-1/gen/decolar"
 
@@ -54,9 +53,6 @@ func main() {
 		var err error
 		repo, err = gorm.Open(sqlite.Open(*dsnF),
 			&gorm.Config{
-				NamingStrategy: schema.NamingStrategy{
-					SingularTable: true,
-				},
 				SkipDefaultTransaction: true,
 			})
 		if err != nil {

@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"reflect"
-	"strings"
 
 	"github.com/go-kit/kit/endpoint"
 	goa "goa.design/goa/v3/pkg"
@@ -20,15 +19,15 @@ func ValidationMiddleware(repo *gorm.DB) endpoint.Middleware {
 		return func(ctx context.Context, request interface{}) (interface{}, error) {
 			switch dto := request.(type) {
 			case *decolarGen.CreatePaisDTO:
-				if err := fieldShouldBeUnique(repo, "nome", dto.Nome, decolar.Pais{}); err != nil {
+				if err := fieldShouldBeUnique(repo, "nome", dto.Nome, &decolar.Pais{}); err != nil {
 					return nil, err
 				}
 			case *decolarGen.CreateCompaniaDTO:
-				if err := fieldShouldBeUnique(repo, "nome", dto.Nome, decolar.Compania{}); err != nil {
+				if err := fieldShouldBeUnique(repo, "nome", dto.Nome, &decolar.Compania{}); err != nil {
 					return nil, err
 				}
 			case *decolarGen.CreateAeroportoDTO:
-				if err := fieldShouldBeUnique(repo, "nome", dto.Nome, decolar.Aeroporto{}); err != nil {
+				if err := fieldShouldBeUnique(repo, "nome", dto.Nome, &decolar.Aeroporto{}); err != nil {
 					return nil, err
 				}
 			}
@@ -37,10 +36,10 @@ func ValidationMiddleware(repo *gorm.DB) endpoint.Middleware {
 	}
 }
 
-func fieldShouldBeUnique(repo *gorm.DB, fieldName, fieldValue string, model interface{}) error {
+func fieldShouldBeUnique(repo *gorm.DB, fieldName, fieldValue string, iface interface{}) error {
 	query := fmt.Sprintf("%s = ?", fieldName)
-	tableName := strings.ToLower(reflect.TypeOf(model).Name())
-	rows := repo.Table(tableName).Where(query, fieldValue).Take(map[string]interface{}{}).RowsAffected
+	v := reflect.ValueOf(iface).Interface()
+	rows := repo.First(v, query, fieldValue).RowsAffected
 	if rows > 0 {
 		return &goa.ServiceError{
 			Name:    "invalid_fields",
